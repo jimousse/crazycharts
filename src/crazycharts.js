@@ -4,13 +4,13 @@ import {
 	BAR_INNER_PADDING,
 	BAR_OUTER_PADDING,
 	TICK_PADDING,
-	FONT_SIZE,
-	CHARACTER_WIDTH,
 	AXIS_COLOR,
-	AXIS_TITLE_PADDING,
 	FONT_FAMILY,
 	AXIS_TITLE_FONT_SIZE
 } from './constants';
+
+import {Bar} from './bar';
+import {computeMargins} from './margins';
 
 export class CrazyChart {
 	constructor(options) {
@@ -23,34 +23,12 @@ export class CrazyChart {
 		for (const prop in options) {
 			this[prop] = options[prop];
 		}
-		this.computeMargins();
+		this.margin = computeMargins(options);
 		this.insertSVG();
 		this.createScales();
 		this.createYAxis();
 		this.createXAxis();
 		this.createBars();
-	}
-
-	computeMargins() {
-		// yaxis
-		if (this.yAxisOptions.orientation === 'left') {
-			this.margin.left += this.getLongestLabel() + TICK_SIZE + TICK_PADDING;
-			// title
-			this.margin.left += FONT_SIZE + AXIS_TITLE_PADDING;
-		} else {
-			this.margin.right += this.getLongestLabel() + TICK_SIZE + TICK_PADDING;
-			// title
-			this.margin.right += FONT_SIZE + AXIS_TITLE_PADDING;
-		}
-		this.margin.top += FONT_SIZE;
-
-		// xaxis
-		this.margin.bottom += TICK_SIZE + TICK_PADDING + FONT_SIZE;
-	}
-
-	getLongestLabel() {
-		const labelLengths = this.data.map(d => `${d[this.yAxisOptions.value]}`.length);
-		return Math.max(...labelLengths)*CHARACTER_WIDTH;
 	}
 
 	insertSVG() {
@@ -61,24 +39,26 @@ export class CrazyChart {
 	}
 
 	createXScale() {
+		const {data, category} = this.series;
 		this.xScale = d3.scaleBand();
 		this.xScale
-			.domain(this.data.map(d => d[this.xAxisOptions.category]))
+			.domain(data.map(d => d[category]))
 			.range([this.margin.left, this.width - this.margin.right])
 			.paddingInner(BAR_INNER_PADDING)
 			.paddingOuter(BAR_OUTER_PADDING);
 	}
 
 	createYScale() {
-		const minDomain = Math.min(0, d3.min(this.data, d => d[this.yAxisOptions.value]));
-		const maxDomain = d3.max(this.data, d => d[this.yAxisOptions.value]);
+		const {data, value} = this.series;
+		const minDomain = Math.min(0, d3.min(data, d => d[value]));
+		const maxDomain = d3.max(data, d => d[value]);
 		this.yScale = d3.scaleLinear()
 			.domain([minDomain, maxDomain])
 			.range([this.height - this.margin.bottom, this.margin.top]);
 	}
 
 	createYAxis() {
-		const {orientation} = this.yAxisOptions;
+		const {orientation, title} = this.yAxisOptions;
 		const axisConstructor = orientation === 'left' ? d3.axisLeft : d3.axisRight;
 		this.yAxis = axisConstructor(this.yScale);
 
@@ -104,8 +84,8 @@ export class CrazyChart {
 
 		const titleY = orientation === 'left' ? 0 : this.width - AXIS_TITLE_FONT_SIZE;
 
-		// axis title
-		this.svg.append("text")
+		if (title) {
+			this.svg.append("text")
 			.attr('class', 'yaxis-title')
 			.attr("transform", `rotate(-90)`)
 			.attr("y", titleY)
@@ -114,6 +94,7 @@ export class CrazyChart {
 			.style("text-anchor", "middle")
 			.style("font-family", FONT_FAMILY)
 			.text(this.yAxisOptions.title);
+		}
 	}
 
 	createXAxis() {
@@ -138,22 +119,12 @@ export class CrazyChart {
 	}
 
 	createBars() {
-		const x = this.xScale;
-		const y = this.yScale;
-		const {category} = this.xAxisOptions;
-		const {value} = this.yAxisOptions;
-		const data = this.data;
-
-		this.svg.append('g')
-			.attr('class', 'bars')
-			.selectAll('rect')
-			.data(data)
-			.join('rect')
-			.attr('class', 'bar')
-			.attr('fill', d => d3.interpolateWarm(Math.random()))
-			.attr('width', x.bandwidth())
-			.attr('height', d => Math.abs(y(0) - y(d[value])))
-			.attr('x', d => x(d[category]))
-			.attr('y', d => d[value] >= 0 ? y(d[value]) : y(0));
+		const barBuilder = new Bar({
+			svg: this.svg,
+			series: this.series,
+			xScale: this.xScale,
+			yScale: this.yScale,
+		});
+		barBuilder.render();
 	}
 }

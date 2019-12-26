@@ -5,6 +5,6 @@ export const TICK_PADDING = 3;
 export const FONT_SIZE = 12;
 export const CHARACTER_WIDTH = 6.5;
 export const AXIS_COLOR = 'lightgray';
-export const AXIS_TITLE_PADDING = 15;
+export const AXIS_TITLE_PADDING = 10;
 export const AXIS_TITLE_FONT_SIZE = 16 + 4;
 export const FONT_FAMILY = "sans-serif";

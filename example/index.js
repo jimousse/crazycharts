@@ -10,7 +10,7 @@ import {CrazyChart} from '../src/index';
 			name: "Yassine"
 		},
 		{
-			awesomeness: -3,
+			awesomeness: 3,
 			name: "Jimmy"
 		},
 		{
@@ -28,14 +28,14 @@ const options = {
 	node: chartContainer,
 	height: 600,
 	width: 900,
-	data,
-	xAxisOptions: {
+	series: {
+		data,
+		name: 'Awesomeness',
 		category: 'name',
+		value: 'awesomeness',
 	},
 	yAxisOptions: {
-		value: 'awesomeness',
-		title: 'Dick size (cm)',
-		orientation: 'rightt'
+		orientation: 'right'
 	}
 };
 new CrazyChart(options);
