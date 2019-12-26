@@ -1,0 +1,10 @@
+export const TICK_SIZE = 6;
+export const BAR_INNER_PADDING = 0.1;
+export const BAR_OUTER_PADDING = 0.05;
+export const TICK_PADDING = 3;
+export const FONT_SIZE = 12;
+export const CHARACTER_WIDTH = 6.5;
+export const AXIS_COLOR = 'lightgray';
+export const AXIS_TITLE_PADDING = 15;
+export const AXIS_TITLE_FONT_SIZE = 16 + 4;
+export const FONT_FAMILY = "sans-serif";
