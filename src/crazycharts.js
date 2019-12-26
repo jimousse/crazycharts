@@ -11,6 +11,7 @@ import {
 
 import {Bar} from './bar';
 import {computeMargins} from './margins';
+import {Tooltip} from './tooltip';
 
 export class CrazyChart {
 	constructor(options) {
@@ -24,6 +25,7 @@ export class CrazyChart {
 			this[prop] = options[prop];
 		}
 		this.margin = computeMargins(options);
+		this.tooltip = new Tooltip(this.node);
 		this.insertSVG();
 		this.createScales();
 		this.createYAxis();
@@ -124,6 +126,7 @@ export class CrazyChart {
 			series: this.series,
 			xScale: this.xScale,
 			yScale: this.yScale,
+			tooltip: this.tooltip,
 		});
 		barBuilder.render();
 	}

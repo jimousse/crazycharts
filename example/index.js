@@ -2,19 +2,19 @@ import {CrazyChart} from '../src/index';
 
 	const data = [
 		{
-			awesomeness: 10,
+			awesomeness: 8,
 			name: "Edouard"
 		},
 		{
-			awesomeness: 14,
+			awesomeness: 10,
 			name: "Yassine"
 		},
 		{
-			awesomeness: 3,
+			awesomeness: 20,
 			name: "Jimmy"
 		},
 		{
-			awesomeness: 16,
+			awesomeness: 13,
 			name: "Barthe"
 		},
 		{
@@ -35,7 +35,8 @@ const options = {
 		value: 'awesomeness',
 	},
 	yAxisOptions: {
-		orientation: 'right'
+		orientation: 'left',
+		title: 'Dick size (cm)'
 	}
 };
 new CrazyChart(options);
