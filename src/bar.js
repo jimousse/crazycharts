@@ -14,7 +14,7 @@ export class Bar {
 
 		const fill = Array.isArray(color) && color.length > 1 ?
 			(d, i) => color[i % color.length] :
-			(d) => d3.interpolateWarm(Math.random());
+			() => d3.interpolateWarm(Math.random());
 
 		this.svg.append('g')
 		.attr('class', 'bars')
@@ -26,6 +26,15 @@ export class Bar {
 		.attr('width', x.bandwidth())
 		.attr('height', d => Math.abs(y(0) - y(d[value])))
 		.attr('x', d => x(d[category]))
-		.attr('y', d => d[value] >= 0 ? y(d[value]) : y(0));
+		.attr('y', d => d[value] >= 0 ? y(d[value]) : y(0))
+		.on('mouseover', function(d,i) {
+			const currentCategory = d[category];
+			d3.selectAll('rect.bar').style('opacity', (d) => {
+				return currentCategory === d[category] ? 1 : 0.5;
+			});
+		})
+		.on('mouseout', function(d,i) {
+			d3.selectAll('rect.bar').style('opacity', '1');
+		});
 	}
 }
